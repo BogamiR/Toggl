@@ -2,6 +2,7 @@ package com.bogamir.toggl;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,15 +12,24 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Runnable {
 
     LinearLayout Main;
-    EditText editText;
-    Button save;
+    EditText editText, selectProject;
+    TextView timer;
+    Button go;
+    SimpleDateFormat time = new SimpleDateFormat("HH:mm");
+    Handler handler = new Handler();
+    boolean flag = true;
+    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +40,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Main = (LinearLayout) findViewById(R.id.Main);
         editText = (EditText) findViewById(R.id.editText);
-        save = (Button) findViewById(R.id.save);
+        selectProject = (EditText) findViewById(R.id.selectProject);
+        timer = (TextView) findViewById(R.id.timer);
+        go = (Button) findViewById(R.id.go);
 
-        save.setOnClickListener(this);
+
+        go.setOnClickListener(this);
+
     }
 
     @Override
@@ -46,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.timerMenu:
                 Intent timer = new Intent(this, MainActivity.class);
                 startActivity(timer);
@@ -70,30 +84,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.save:
-                LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
-                CheckBox chb = new CheckBox(this);
-                TextView tv1 = new TextView(this);
-                TextView tv2 = new TextView(this);
-                Button btn1 = new Button(this);
-                Button btn2 = new Button(this);
-                Button btn3 = new Button(this);
-                TextView tv3 = new TextView(this);
-                TextView tv4 = new TextView(this);
-                tv1.setText(editText.getText().toString());
-                tv4.setText(editText.getText().toString());
+            case R.id.go:
+                if (flag) {
+                    go.setText(R.string.stop);
+                    flag = false;
+                    run();
+                } else {
+                    handler.removeCallbacks(this);
+                    timer.setText(R.string.timer);
+                    go.setText(R.string.go);
+                    String timeStart = time.format(new Date(System.currentTimeMillis()));
+                    LinearLayout.LayoutParams lParams1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+                    LinearLayout.LayoutParams lParams0 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    CheckBox chb = new CheckBox(this);
+                    TextView tv1 = new TextView(this);
+                    TextView tv2 = new TextView(this);
+                    Button btn1 = new Button(this);
+                    ImageButton btn2 = new ImageButton(this);
+                    TextView tv3 = new TextView(this);
+                    TextView tv4 = new TextView(this);
+                    tv1.setText(editText.getText().toString());
+                    tv2.setText(selectProject.getText().toString());
+                    btn2.setImageResource(R.drawable.ic_play_arrow_black_18dp);
+                    tv3.setText(i + "sec");
+                    tv4.setText(timeStart + " - " + time.format(new Date(System.currentTimeMillis())));
 
-
-                Main.addView(chb, lParams);
-                Main.addView(tv1, lParams);
-                Main.addView(tv2, lParams);
-                Main.addView(btn1, lParams);
-                Main.addView(btn2, lParams);
-                Main.addView(btn3, lParams);
-                Main.addView(tv3, lParams);
-                Main.addView(tv4, lParams);
+                    Main.addView(chb, lParams0);
+                    Main.addView(tv1, lParams1);
+                    Main.addView(tv2, lParams1);
+                    Main.addView(btn1, lParams0);
+                    Main.addView(btn2, lParams0);
+                    Main.addView(tv3, lParams0);
+                    Main.addView(tv4, lParams0);
+                    i=0;
+                    flag = true;
+                }
                 break;
-
         }
+    }
+
+
+    @Override
+    public void run() {
+        timer.setText(i++ + " sec");
+        handler.postDelayed(this, 1000);
     }
 }

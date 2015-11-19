@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Toggl</string>
     <string name="editText">Name</string>
-    <string name="save">Save</string>
+    <string name="go">GO!</string>
     <string name="selectProject">SELECT PROJECT</string>
     <string name="timer">0 sec</string>
     <string name="timerMenu">TIMER</string>
@@ -11,4 +11,5 @@
     <string name="title_activity_reports">Reports</string>
     <string name="title_activity_projects">Projects</string>
     <string name="title_activity_team">Team</string>
+    <string name="stop">Stop</string>
 </resources>
