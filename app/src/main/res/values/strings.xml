@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Toggl</string>
-    <string name="action_settings">Settings</string>
-    <string name="editText">What have you done?</string>
+    <string name="editText">Name</string>
     <string name="save">Save</string>
+    <string name="selectProject">SELECT PROJECT</string>
+    <string name="timer">0 sec</string>
+    <string name="timerMenu">TIMER</string>
+    <string name="Reports">Reports</string>
+    <string name="Projects">Projects</string>
+    <string name="Team">Team</string>
 </resources>
