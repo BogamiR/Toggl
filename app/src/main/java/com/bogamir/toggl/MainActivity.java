@@ -1,5 +1,6 @@
 package com.bogamir.toggl;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -42,16 +44,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        /*//noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }*/
-
+        switch (id){
+            case R.id.timerMenu:
+                Intent timer = new Intent(this, MainActivity.class);
+                startActivity(timer);
+                break;
+            case R.id.Reports:
+                Intent reports = new Intent(this, Reports.class);
+                startActivity(reports);
+                break;
+            case R.id.Projects:
+                Intent projects = new Intent(this, Projects.class);
+                startActivity(projects);
+                break;
+            case R.id.Team:
+                Intent team = new Intent(this, Team.class);
+                startActivity(team);
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -59,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.save:
-                LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
                 CheckBox chb = new CheckBox(this);
                 TextView tv1 = new TextView(this);
                 TextView tv2 = new TextView(this);
@@ -69,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 TextView tv3 = new TextView(this);
                 TextView tv4 = new TextView(this);
                 tv1.setText(editText.getText().toString());
+                tv4.setText(editText.getText().toString());
+
 
                 Main.addView(chb, lParams);
                 Main.addView(tv1, lParams);

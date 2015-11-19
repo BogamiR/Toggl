@@ -8,4 +8,7 @@
     <string name="Reports">Reports</string>
     <string name="Projects">Projects</string>
     <string name="Team">Team</string>
+    <string name="title_activity_reports">Reports</string>
+    <string name="title_activity_projects">Projects</string>
+    <string name="title_activity_team">Team</string>
 </resources>
