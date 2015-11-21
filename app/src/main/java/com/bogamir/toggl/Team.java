@@ -20,7 +20,7 @@ public class Team extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -29,27 +29,7 @@ public class Team extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.timerMenu:
-                Intent timer = new Intent(this, MainActivity.class);
-                startActivity(timer);
-                break;
-            case R.id.Reports:
-                Intent reports = new Intent(this, Reports.class);
-                startActivity(reports);
-                break;
-            case R.id.Projects:
-                Intent projects = new Intent(this, Projects.class);
-                startActivity(projects);
-                break;
-            case R.id.Team:
-                Intent team = new Intent(this, Team.class);
-                startActivity(team);
-                break;
-        }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
 }

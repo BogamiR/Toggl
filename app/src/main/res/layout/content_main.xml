@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:clickable="false"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
-    tools:showIn="@layout/activity_main"
-    android:baselineAligned="false"
-    android:clickable="false">
+    tools:showIn="@layout/activity_main">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,45 +22,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:clickable="false"
             android:text="@string/editText"
-            android:textSize="16dp"/>
+            android:textSize="16dp" />
 
         <EditText
             android:id="@+id/selectProject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:text="@string/selectProject"
-            android:textSize="10dp"
-            android:layout_gravity="center_vertical"/>
+            android:textSize="10dp" />
 
         <ImageButton
             android:id="@+id/filterTags"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_attach_file_black_18dp"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/ic_attach_file_black_18dp" />
 
         <TextView
             android:id="@+id/timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/timer"
-            android:textSize="16dp"/>
+            android:textSize="16dp" />
 
         <Button
             android:id="@+id/go"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onClick"
             android:text="@string/go"
-            android:textSize="16dp"
-            android:onClick="onClick" />
+            android:textSize="16dp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/Main"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:scrollIndicators="right"></LinearLayout>
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/Main"
+            android:orientation="vertical"
+            android:scrollIndicators="right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

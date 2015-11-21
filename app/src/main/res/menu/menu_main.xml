@@ -3,11 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
     <item
-        android:id="@+id/timerMenu"
-        android:orderInCategory="1"
-        android:title="@string/timerMenu"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/Reports"
         android:orderInCategory="1"
         android:title="@string/Reports"
