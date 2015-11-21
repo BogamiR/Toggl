@@ -2,7 +2,7 @@
     <string name="app_name">Toggl</string>
     <string name="editText">Name</string>
     <string name="go">GO!</string>
-    <string name="selectProject">SELECT PROJECT</string>
+    <string name="selectProject">PROJECT</string>
     <string name="timer">0 sec</string>
     <string name="Reports">Reports</string>
     <string name="Projects">Projects</string>

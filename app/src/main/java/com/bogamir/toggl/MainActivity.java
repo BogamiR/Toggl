@@ -20,12 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Runnable {
 
-    LinearLayout Main, layout;
+    LinearLayout linear;
     EditText editText, selectProject;
     TextView timer;
     Button go;
@@ -33,7 +35,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Handler handler = new Handler();
     String timeStart;
     boolean flag = true;
-    int i = 0, j=0;
+    int time_calc = 0, j = 0;
+    List<View> allEds;
+    View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +46,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Main = (LinearLayout) findViewById(R.id.Main);
+        linear = (LinearLayout) findViewById(R.id.linear);
         editText = (EditText) findViewById(R.id.editText);
         selectProject = (EditText) findViewById(R.id.selectProject);
         timer = (TextView) findViewById(R.id.timer);
         go = (Button) findViewById(R.id.go);
-
+        allEds = new ArrayList<View>();
 
         go.setOnClickListener(this);
 
@@ -95,72 +99,69 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     timer.setText(R.string.timer);
                     go.setText(R.string.go);
 
-                    //LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+                    view = getLayoutInflater().inflate(R.layout.custom_layout, null);
 
-                    layout = new LinearLayout(this);
-                    layout.setOrientation(LinearLayout.HORIZONTAL);
-                    layout.setId(j++);
+                    TextView tv1 = (TextView) view.findViewById(R.id.tv1);
+                    TextView tv2 = (TextView) view.findViewById(R.id.tv2);
+                    TextView tv3 = (TextView) view.findViewById(R.id.tv3);
+                    TextView tv4 = (TextView) view.findViewById(R.id.tv4);
 
-
-                    LinearLayout.LayoutParams params0 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-                    LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 4f);
-                    TextView tv1 = new TextView(this);
-                    TextView tv2 = new TextView(this);
-                    Button btn1 = new Button(this);
-                    ImageButton btn2 = new ImageButton(this);
-                    TextView tv3 = new TextView(this);
-                    TextView tv4 = new TextView(this);
 
                     tv1.setText(editText.getText().toString());
                     tv2.setText(selectProject.getText().toString());
-                    btn2.setImageResource(R.drawable.ic_play_arrow_black_18dp);
-                    tv3.setText(i + "sec");
+                    tv3.setText(time_calc + "sec");
                     tv4.setText(timeStart + " - " + time.format(new Date(System.currentTimeMillis())));
 
-                    layout.addView(tv1, params1);
-                    layout.addView(tv2, params1);
-                    layout.addView(btn1, params0);
-                    layout.addView(btn2, params0);
-                    layout.addView(tv3, params0);
-                    layout.addView(tv4, params0);
+                    view.setId(j);
 
-                    registerForContextMenu(layout);
+                    allEds.add(view);
+                    registerForContextMenu(allEds.get(j));
 
-                    Main.addView(layout);
-                   /* Main.addView(chb, lParams0);
-                    Main.addView(tv1, lParams1);
-                    Main.addView(tv2, lParams1);
-                    Main.addView(btn1, lParams0);
-                    Main.addView(btn2, lParams0);
-                    Main.addView(tv3, lParams0);
-                    Main.addView(tv4, lParams0);*/
-                    i=0;
+                    linear.addView(view);
+
+                    time_calc = 0;
                     j++;
                     flag = true;
                 }
                 break;
-            case 0:
-
+            case R.id.btn2:
+                timeStart = time.format(new Date(System.currentTimeMillis()));
+                go.setText(R.string.stop);
+                flag = false;
+                run();
+                break;
         }
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                menu.add("Delete");
-        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, 0, 0, "Delete");
+        menu.add(0, 1, 0, "Deleted all");
+        //super.onCreateContextMenu(menu, v, menuInfo);
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        layout.removeAllViews();
-        Toast.makeText(MainActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
-
+        switch (item.getItemId()) {
+            case 0:
+                for (Integer i = 0; i < allEds.size(); i++)
+                    if (view.getId() == i) {
+                        ((LinearLayout) allEds.get(i).getParent()).removeView(allEds.get(i));
+                        allEds.remove(i);
+                        Toast.makeText(MainActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
+                    }
+                break;
+            case 1:
+                linear.removeAllViews();
+                Toast.makeText(MainActivity.this, "Deleted all", Toast.LENGTH_SHORT).show();
+                break;
+        }
         return super.onContextItemSelected(item);
     }
 
     @Override
     public void run() {
-        timer.setText(i++ + " sec");
+        timer.setText(time_calc++ + " sec");
         handler.postDelayed(this, 1000);
     }
 }
