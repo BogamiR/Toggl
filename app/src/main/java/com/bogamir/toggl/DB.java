@@ -9,7 +9,7 @@ package com.bogamir.toggl;
 
 public class DB {
 
-    private static final String DB_NAME = "mydb";
+    private static final String DB_NAME = "myDBase";
     private static final int DB_VERSION = 1;
     private static final String DB_TABLE = "mytab";
 
@@ -31,7 +31,6 @@ public class DB {
                     ");";
 
     private final Context mCtx;
-
 
     private DBHelper mDBHelper;
     private SQLiteDatabase mDB;
@@ -84,16 +83,6 @@ public class DB {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(DB_CREATE);
-
-            ContentValues cv = new ContentValues();
-            for (int i = 1; i < 5; i++) {
-                cv.put(COLUMN_TV1, "Name"+i);
-                cv.put(COLUMN_TV2, "Project"+i);
-                cv.put(COLUMN_BTN1, R.drawable.ic_play_arrow_black_18dp);
-                cv.put(COLUMN_TV3, i+"sec");
-                cv.put(COLUMN_TV4, "time");
-                mDB.insert(DB_TABLE, null, cv);
-            }
         }
 
         @Override
