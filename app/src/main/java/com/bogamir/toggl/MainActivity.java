@@ -129,21 +129,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, 0, 0, "Delete");
-        menu.add(0, 1, 0, "Deleted all");
+        menu.add(0, 0, 0, "Continue");
+        menu.add(0, 1, 0, "Delete");
+        menu.add(0, 2, 0, "Deleted all");
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 0:
+                break;
+            case 1:
                 AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                 db.delRec(acmi.id);
                 getSupportLoaderManager().getLoader(0).forceLoad();
+                Toast.makeText(MainActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
                 return true;
                 //break;
-            case 1:
-                linear.removeAllViews();
+            case 2:
+                AdapterView.AdapterContextMenuInfo acmiAll = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                //for ();
+                db.delRec(acmiAll.id);
+                getSupportLoaderManager().getLoader(0).forceLoad();
                 Toast.makeText(MainActivity.this, "Deleted all", Toast.LENGTH_SHORT).show();
                 break;
         }
