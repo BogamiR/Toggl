@@ -56,15 +56,9 @@
             android:text="@string/go"
             android:textSize="16dp" />
     </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <ListView
             android:id="@+id/lvData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </ListView>
-    </ScrollView>
 </LinearLayout>
