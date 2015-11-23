@@ -86,10 +86,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent projects = new Intent(this, Projects.class);
                 startActivity(projects);
                 break;
-            case R.id.Team:
-                Intent team = new Intent(this, Team.class);
-                startActivity(team);
-                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -111,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             time_calc + "sec", timeStart + " - " + time.format(new Date(System.currentTimeMillis())));
                     getSupportLoaderManager().getLoader(0).forceLoad();
 
+                    editText.setText("");
+                    selectProject.setText("");
                     time_calc = 0;
                     flag = true;
                 }
@@ -144,13 +142,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId()) {
             case Continue:
                 Go();
+                Clickable(false);
                 AdapterView.AdapterContextMenuInfo Get = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                 Cursor cr = db.getAllData();
                 cr.moveToPosition(Get.position);
                 editText.setText(cr.getString(1));
                 selectProject.setText(cr.getString(2));
                 getSupportLoaderManager().getLoader(0).forceLoad();
-                //break;
                 return true;
             case Delete:
                 AdapterView.AdapterContextMenuInfo Del = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();

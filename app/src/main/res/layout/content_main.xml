@@ -34,14 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:hint="@string/selectProject"
-            android:textSize="11dp" />
-
-        <!--<ImageButton
-            android:id="@+id/filterTags"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/ic_attach_file_black_18dp" />-->
+            android:textSize="13dp" />
 
         <TextView
             android:id="@+id/timer"
