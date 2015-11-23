@@ -23,23 +23,25 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="false"
-            android:text="@string/editText"
-            android:textSize="16dp" />
+            android:hint="@string/editText"
+            android:textSize="16dp"
+            android:autoText="false"
+            android:contextClickable="false" />
 
         <EditText
             android:id="@+id/selectProject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/selectProject"
-            android:textSize="10dp" />
+            android:hint="@string/selectProject"
+            android:textSize="11dp" />
 
-        <ImageButton
+        <!--<ImageButton
             android:id="@+id/filterTags"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/ic_attach_file_black_18dp" />
+            android:background="@drawable/ic_attach_file_black_18dp" />-->
 
         <TextView
             android:id="@+id/timer"

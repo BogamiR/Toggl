@@ -16,7 +16,6 @@ public class DB {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TV1= "tv1";
     public static final String COLUMN_TV2= "tv2";
-    public static final String COLUMN_BTN1= "btn1";
     public static final String COLUMN_TV3= "tv3";
     public static final String COLUMN_TV4= "tv4";
 
@@ -25,7 +24,6 @@ public class DB {
                     COLUMN_ID + " integer primary key autoincrement, " +
                     COLUMN_TV1 + " text, " +
                     COLUMN_TV2 + " text, " +
-                    COLUMN_BTN1 + " integer, " +
                     COLUMN_TV3 + " text, " +
                     COLUMN_TV4 + " text" +
                     ");";
@@ -51,25 +49,20 @@ public class DB {
     }
 
     // получить все данные из таблицы DB_TABLE
-    public Cursor getAllData() {
-        return mDB.query(DB_TABLE, null, null, null, null, null, null);
-    }
+    public Cursor getAllData() { return mDB.query(DB_TABLE, null, null, null, null, null, null); }
 
     // добавить запись в DB_TABLE
-    public void addRec(String tv1, String tv2, int btn1, String tv3, String tv4) {
+    public void addRec(String tv1, String tv2, String tv3, String tv4) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_TV1, tv1);
         cv.put(COLUMN_TV2, tv2);
-        cv.put(COLUMN_BTN1, btn1);
         cv.put(COLUMN_TV3, tv3);
         cv.put(COLUMN_TV4, tv4);
         mDB.insert(DB_TABLE, null, cv);
     }
 
     // удалить запись из DB_TABLE
-    public void delRec(long id) {
-        mDB.delete(DB_TABLE, COLUMN_ID + " = " + id, null);
-    }
+    public void delRec(long id) { mDB.delete(DB_TABLE, COLUMN_ID + " = " + id, null); }
 
     // класс по созданию и управлению БД
     private class DBHelper extends SQLiteOpenHelper {

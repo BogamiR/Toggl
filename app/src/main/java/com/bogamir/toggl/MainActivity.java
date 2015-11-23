@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +28,6 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Runnable, LoaderCallbacks<Cursor> {
 
-    LinearLayout linear;
     EditText editText, selectProject;
     TextView timer;
     Button go;
@@ -37,7 +35,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Handler handler = new Handler();
     String timeStart;
     boolean flag = true;
-    int time_calc = 0, j = 0;
+    int time_calc = 0;
+    final int Continue = 0, Delete = 1;
     DB db;
     SimpleCursorAdapter scAdapter;
     ListView lvData;
@@ -52,8 +51,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         db = new DB (this);
         db.open();
 
-        String[] from = new String[] { DB.COLUMN_TV1, DB.COLUMN_TV2, DB.COLUMN_BTN1, DB.COLUMN_TV3, DB.COLUMN_TV4 };
-        int[] to = new int[] { R.id.tv1, R.id.tv2, R.id.btn1, R.id.tv3, R.id.tv4 };
+        String[] from = new String[] { DB.COLUMN_TV1, DB.COLUMN_TV2, DB.COLUMN_TV3, DB.COLUMN_TV4 };
+        int[] to = new int[] { R.id.tv1, R.id.tv2, R.id.tv3, R.id.tv4 };
         scAdapter = new SimpleCursorAdapter(this, R.layout.custom_layout, null, from, to, 0);
         lvData = (ListView) findViewById(R.id.lvData);
         lvData.setAdapter(scAdapter);
@@ -64,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         selectProject = (EditText) findViewById(R.id.selectProject);
         timer = (TextView) findViewById(R.id.timer);
         go = (Button) findViewById(R.id.go);
+
+        go.setOnClickListener(this);
     }
 
     @Override
@@ -95,64 +96,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.go:
                 if (flag) {
-                    timeStart = time.format(new Date(System.currentTimeMillis()));
-                    go.setText(R.string.stop);
-                    flag = false;
-                    run();
+                    Go();
+                    Clickable(false);
                 } else {
+                    Clickable(true);
                     handler.removeCallbacks(this);
                     timer.setText(R.string.timer);
                     go.setText(R.string.go);
 
-                    db.addRec(editText.getText().toString(), selectProject.getText().toString(), R.drawable.ic_play_arrow_black_18dp,
+                    db.addRec(editText.getText().toString(), selectProject.getText().toString(),
                             time_calc + "sec", timeStart + " - " + time.format(new Date(System.currentTimeMillis())));
                     getSupportLoaderManager().getLoader(0).forceLoad();
 
                     time_calc = 0;
-                    j++;
                     flag = true;
                 }
                 break;
-            case R.id.btn1:
-                timeStart = time.format(new Date(System.currentTimeMillis()));
-                go.setText(R.string.stop);
-                flag = false;
-                run();
-                break;
         }
+    }
+
+    public void Go (){
+        timeStart = time.format(new Date(System.currentTimeMillis()));
+        go.setText(R.string.stop);
+        flag = false;
+        run();
+    }
+
+    public void Clickable (boolean flag){
+        editText.setEnabled(flag);
+        editText.setCursorVisible(flag);
+        selectProject.setEnabled(flag);
+        selectProject.setCursorVisible(flag);
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, 0, 0, "Continue");
-        menu.add(0, 1, 0, "Delete");
-        menu.add(0, 2, 0, "Deleted all");
+        menu.add(0, Continue, 0, "Continue");
+        menu.add(0, Delete, 0, "Delete");
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case 0:
-                break;
-            case 1:
-                AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                db.delRec(acmi.id);
+            case Continue:
+                Go();
+                AdapterView.AdapterContextMenuInfo Get = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                Cursor cr = db.getAllData();
+                cr.moveToPosition(Get.position);
+                editText.setText(cr.getString(1));
+                selectProject.setText(cr.getString(2));
+                getSupportLoaderManager().getLoader(0).forceLoad();
+                //break;
+                return true;
+            case Delete:
+                AdapterView.AdapterContextMenuInfo Del = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                db.delRec(Del.id);
                 getSupportLoaderManager().getLoader(0).forceLoad();
                 Toast.makeText(MainActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
                 return true;
-                //break;
-            case 2:
-                AdapterView.AdapterContextMenuInfo acmiAll = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                //for ();
-                db.delRec(acmiAll.id);
-                getSupportLoaderManager().getLoader(0).forceLoad();
-                Toast.makeText(MainActivity.this, "Deleted all", Toast.LENGTH_SHORT).show();
-                break;
         }
         return super.onContextItemSelected(item);
     }
