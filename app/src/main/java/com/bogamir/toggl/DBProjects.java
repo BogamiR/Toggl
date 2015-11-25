@@ -20,7 +20,7 @@ public class DBProjects {
     public static final String COLUMN_TV4= "tv4";
 
     private static final String DB_CREATE =
-            "create table " + DB_TABLE + "(" +
+            "create table " + "myBase" + "(" +
                     COLUMN_ID + " integer primary key autoincrement, " +
                     COLUMN_TV1 + " text, " +
                     COLUMN_TV2 + " text, " +
@@ -49,9 +49,7 @@ public class DBProjects {
     }
 
     // получить все данные из таблицы DB_TABLE
-    public Cursor getAllData() { return mDB.query(DB_TABLE, null, null, null, null, null, null); }
-
-    public Cursor getDB() { return mDB.query("mytab", null, null, null, null, null, null); }
+    public Cursor getAllData() { return mDB.query("myBase", null, null, null, null, null, null); }
 
     // добавить запись в DB_TABLE
     public void addRec(String tv1, String tv2, String tv3, String tv4) {
@@ -60,14 +58,11 @@ public class DBProjects {
         cv.put(COLUMN_TV2, tv2);
         cv.put(COLUMN_TV3, tv3);
         cv.put(COLUMN_TV4, tv4);
-        mDB.insert(DB_TABLE, null, cv);
+        mDB.insert("myBase", null, cv);
     }
 
-    public void delRec(long id) { mDB.delete(DB_TABLE, COLUMN_ID + " = " + id, null); }
-
     // удалить все записи
-    public void delAllRec() { mDB.delete(DB_TABLE,null,null); }
-
+    public void delAllRec() { mDB.delete("myBase", null,null); }
 
     // класс по созданию и управлению БД
     private class DBHelper extends SQLiteOpenHelper {

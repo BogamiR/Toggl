@@ -35,12 +35,10 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        db = new DB(this);
-        db.open();
         dbProjects = new DBProjects(this);
         dbProjects.open();
-        cr = db.getAllData();
-        startManagingCursor(cr);
+        db = new DB(this);
+        db.open();
 
         String[] from = new String[]{DB.COLUMN_TV1, DB.COLUMN_TV2, DB.COLUMN_TV3, DB.COLUMN_TV4};
         int[] to = new int[]{R.id.tv1, R.id.tv2, R.id.tv3, R.id.tv4};
@@ -48,20 +46,20 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
         lvProjects = (ListView) findViewById(R.id.lvProjects);
         lvProjects.setAdapter(scAdapter);
 
+        Cursor cursor = db.getAllData();
 
-        String[] item = new String[cr.getCount()];
-        cr.moveToFirst();
-        for(int j=0; j<cr.getCount(); j++){
-            item[j] = cr.getString(1);
-            cr.moveToNext();
+        String[] item = new String[cursor.getCount()];
+        cursor.moveToFirst();
+        for(int j=0; j<cursor.getCount(); j++){
+            item[j] = cursor.getString(1);
+            dbProjects.addRec(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+            cursor.moveToNext();
         }
-        cr.requery();
+        //dbProjects.addRec("Vasia","","","");
+        cursor.requery();
 
-        cr.moveToFirst();
-            for(int j=0; j<cr.getCount(); j++){
-                db.addRec(cr.getString(1), cr.getString(2), cr.getString(3), cr.getString(4));
-            }
-        cr.requery();
+        cr = dbProjects.getAllData();
+        startManagingCursor(cr);
 
         autoAd = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, item);
 
@@ -93,15 +91,17 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
         cr.moveToFirst();
             dbProjects.delAllRec();
         cr.requery();
+
+        Cursor cursor;
         if (autoCTV.getText().toString() == ""){
-            cr = db.getAllData();
+            cursor = db.getAllData();
         }
         else {
-            cr = db.getData(autoCTV.getText().toString());
+            cursor = db.getData(autoCTV.getText().toString());
         }
-        cr.moveToLast();
-        for(int j=0; j<cr.getCount(); j++){
-            dbProjects.addRec(cr.getString(1), cr.getString(2), cr.getString(3), cr.getString(4));
+        cr.moveToFirst();
+        for(int j=0; j<cursor.getCount(); j++){
+            dbProjects.addRec(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
         }
         cr.requery();
     }
