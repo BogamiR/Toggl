@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public DB db;
     SimpleCursorAdapter scAdapter;
     ListView lvData;
-    Table table = new Table();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (id) {
             case R.id.Projects:
                 Intent projects = new Intent(this, Projects.class);
-                table.SetCursor(db.getAllData());
                 startActivity(projects);
                 break;
         }
@@ -236,8 +234,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     };
-
-    public Cursor GetCursor(String s){
-        return db.getData(s);
-    }
 }

@@ -63,14 +63,12 @@ public class DB {
 
     public Cursor getData(String s) {
         String selection = "tv1 LIKE \"" + s + "%\"";
-        //String[] selectionArgs = new String[] { s };
         return mDB.query(DB_TABLE, null, selection, null, null, null, COLUMN_TV1); }
 
     // удалить запись из DB_TABLE
     public void delRec(long id) { mDB.delete(DB_TABLE, COLUMN_ID + " = " + id, null); }
 
     public void delAllRec() { mDB.delete(DB_TABLE,null,null); }
-
 
     // класс по созданию и управлению БД
     private class DBHelper extends SQLiteOpenHelper {

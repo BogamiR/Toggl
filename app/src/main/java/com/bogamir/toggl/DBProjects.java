@@ -9,9 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBProjects {
 
-    protected static String DB_NAME = "projectDBase";
+    private static final String DB_NAME = "projectDBase";
     private static final int DB_VERSION = 1;
-    protected static String DB_TABLE = "myBase";
+    private static final String DB_TABLE = "myBase";
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TV1= "tv1";
@@ -51,6 +51,8 @@ public class DBProjects {
     // получить все данные из таблицы DB_TABLE
     public Cursor getAllData() { return mDB.query(DB_TABLE, null, null, null, null, null, null); }
 
+    public Cursor getDB() { return mDB.query("mytab", null, null, null, null, null, null); }
+
     // добавить запись в DB_TABLE
     public void addRec(String tv1, String tv2, String tv3, String tv4) {
         ContentValues cv = new ContentValues();
@@ -60,6 +62,8 @@ public class DBProjects {
         cv.put(COLUMN_TV4, tv4);
         mDB.insert(DB_TABLE, null, cv);
     }
+
+    public void delRec(long id) { mDB.delete(DB_TABLE, COLUMN_ID + " = " + id, null); }
 
     // удалить все записи
     public void delAllRec() { mDB.delete(DB_TABLE,null,null); }

@@ -22,10 +22,11 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
     AutoCompleteTextView autoCTV;
     DBProjects dbProjects;
     ArrayAdapter<String> autoAd;
+    DB db;
     TextView time;
     ListView lvProjects;
     SimpleCursorAdapter scAdapter;
-    Table table = new Table();
+    Cursor cr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,18 +35,33 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        db = new DB(this);
+        db.open();
         dbProjects = new DBProjects(this);
         dbProjects.open();
+        cr = db.getAllData();
+        startManagingCursor(cr);
 
-        Cursor cr = table.GetCursor();
-        cr.moveToFirst();
+        String[] from = new String[]{DB.COLUMN_TV1, DB.COLUMN_TV2, DB.COLUMN_TV3, DB.COLUMN_TV4};
+        int[] to = new int[]{R.id.tv1, R.id.tv2, R.id.tv3, R.id.tv4};
+        scAdapter = new SimpleCursorAdapter(this, R.layout.custom_layout, cr, from, to);
+        lvProjects = (ListView) findViewById(R.id.lvProjects);
+        lvProjects.setAdapter(scAdapter);
+
+
         String[] item = new String[cr.getCount()];
-        int i = 0;
-        while (cr.moveToNext()) {
-            item[i++] = cr.getString(1);
-            dbProjects.addRec(cr.getString(1), cr.getString(2), cr.getString(3), cr.getString(4));
+        cr.moveToFirst();
+        for(int j=0; j<cr.getCount(); j++){
+            item[j] = cr.getString(1);
+            cr.moveToNext();
         }
-        cr.close();
+        cr.requery();
+
+        cr.moveToFirst();
+            for(int j=0; j<cr.getCount(); j++){
+                db.addRec(cr.getString(1), cr.getString(2), cr.getString(3), cr.getString(4));
+            }
+        cr.requery();
 
         autoAd = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, item);
 
@@ -54,20 +70,12 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
         autoCTV.setAdapter(autoAd);
 
         time = (TextView) findViewById(R.id.tvProjects);
-        lvProjects = (ListView) findViewById(R.id.lvProjects);
-
-        String[] from = new String[]{DB.COLUMN_TV1, DB.COLUMN_TV2, DB.COLUMN_TV3, DB.COLUMN_TV4};
-        int[] to = new int[]{R.id.tv1, R.id.tv2, R.id.tv3, R.id.tv4};
-        scAdapter = new SimpleCursorAdapter(this, R.layout.custom_layout, null, from, to, 0);
-        lvProjects.setAdapter(scAdapter);
-        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        dbProjects.delAllRec();
-        getSupportLoaderManager().getLoader(0).forceLoad();
+        cr.close();
         dbProjects.close();
     }
 
@@ -81,21 +89,21 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
 
     @Override
     public void afterTextChanged(Editable s) {
-        dbProjects.delAllRec();
-        getSupportLoaderManager().getLoader(0).forceLoad();
-        Cursor text;
+
+        cr.moveToFirst();
+            dbProjects.delAllRec();
+        cr.requery();
         if (autoCTV.getText().toString() == ""){
-            text = table.GetCursor();
+            cr = db.getAllData();
         }
         else {
-            text = table.GetCursor(autoCTV.getText().toString());
+            cr = db.getData(autoCTV.getText().toString());
         }
-        text.moveToFirst();
-        do {
-            dbProjects.addRec(text.getString(1), text.getString(2), text.getString(3), text.getString(4));
+        cr.moveToLast();
+        for(int j=0; j<cr.getCount(); j++){
+            dbProjects.addRec(cr.getString(1), cr.getString(2), cr.getString(3), cr.getString(4));
         }
-        while (text.moveToNext());
-        text.close();
+        cr.requery();
     }
 
     @Override
@@ -114,7 +122,6 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
 
     static class MyCursorLoader extends CursorLoader {
         DBProjects dbProject;
-        Table table;
 
         public MyCursorLoader(Context context, DBProjects dbProject) {
             super(context);
@@ -123,7 +130,7 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
 
         @Override
         public Cursor loadInBackground() {
-            Cursor cursor = this.dbProject.getAllData();
+            Cursor cursor = dbProject.getAllData();
             return cursor;
         }
     }
