@@ -1,6 +1,10 @@
 package com.bogamir.toggl;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -36,10 +40,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String timeStart;
     boolean flag = true;
     int time_calc = 0;
-    final int Continue = 0, Delete = 1;
-    DB db;
+    final int Continue = 0, Delete = 1, DeleteAll = 2, DIALOG_EXIT = 1;
+    public DB db;
     SimpleCursorAdapter scAdapter;
     ListView lvData;
+    Table table = new Table();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +53,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        db = new DB (this);
+        db = new DB(this);
         db.open();
 
-        String[] from = new String[] { DB.COLUMN_TV1, DB.COLUMN_TV2, DB.COLUMN_TV3, DB.COLUMN_TV4 };
-        int[] to = new int[] { R.id.tv1, R.id.tv2, R.id.tv3, R.id.tv4 };
+        String[] from = new String[]{DB.COLUMN_TV1, DB.COLUMN_TV2, DB.COLUMN_TV3, DB.COLUMN_TV4};
+        int[] to = new int[]{R.id.tv1, R.id.tv2, R.id.tv3, R.id.tv4};
         scAdapter = new SimpleCursorAdapter(this, R.layout.custom_layout, null, from, to, 0);
         lvData = (ListView) findViewById(R.id.lvData);
         lvData.setAdapter(scAdapter);
@@ -78,12 +83,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.Reports:
-                Intent reports = new Intent(this, Reports.class);
-                startActivity(reports);
-                break;
             case R.id.Projects:
                 Intent projects = new Intent(this, Projects.class);
+                table.SetCursor(db.getAllData());
                 startActivity(projects);
                 break;
         }
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     go.setText(R.string.go);
 
                     db.addRec(editText.getText().toString(), selectProject.getText().toString(),
-                            time_calc + "sec", timeStart + " - " + time.format(new Date(System.currentTimeMillis())));
+                            time_calc + " sec", timeStart + " - " + time.format(new Date(System.currentTimeMillis())));
                     getSupportLoaderManager().getLoader(0).forceLoad();
 
                     editText.setText("");
@@ -116,14 +118,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void Go (){
+    public void Go() {
         timeStart = time.format(new Date(System.currentTimeMillis()));
         go.setText(R.string.stop);
         flag = false;
         run();
     }
 
-    public void Clickable (boolean flag){
+    public void Clickable(boolean flag) {
         editText.setEnabled(flag);
         editText.setCursorVisible(flag);
         selectProject.setEnabled(flag);
@@ -135,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.add(0, Continue, 0, "Continue");
         menu.add(0, Delete, 0, "Delete");
+        menu.add(0, DeleteAll, 0, "Delete all");
     }
 
     @Override
@@ -156,11 +159,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 getSupportLoaderManager().getLoader(0).forceLoad();
                 Toast.makeText(MainActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
                 return true;
+            case DeleteAll:
+                showDialog(DIALOG_EXIT);
+                return true;
         }
         return super.onContextItemSelected(item);
     }
 
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         db.close();
     }
@@ -173,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bnd1) {
-        return new MyCursorLoader(this,db);
+        return new MyCursorLoader(this, db);
     }
 
     @Override
@@ -188,15 +194,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     static class MyCursorLoader extends CursorLoader {
         DB db;
 
-        public MyCursorLoader(Context context, DB db){
+        public MyCursorLoader(Context context, DB db) {
             super(context);
             this.db = db;
         }
 
         @Override
-        public Cursor loadInBackground(){
+        public Cursor loadInBackground() {
             Cursor cursor = db.getAllData();
             return cursor;
         }
+    }
+
+    protected Dialog onCreateDialog(int id) {
+        if (id == DIALOG_EXIT) {
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+            // сообщение
+            adb.setMessage("Delete all?");
+            // кнопка положительного ответа
+            adb.setPositiveButton(R.string.yes, myClickListener);
+            // кнопка нейтрального ответа
+            adb.setNeutralButton(R.string.cancel, myClickListener);
+            // создаем диалог
+            return adb.create();
+        }
+        return super.onCreateDialog(id);
+    }
+
+    public OnClickListener myClickListener = new OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                // положительная кнопка
+                case Dialog.BUTTON_POSITIVE:
+                    db.delAllRec();
+                    getSupportLoaderManager().getLoader(0).forceLoad();
+                    Toast.makeText(MainActivity.this, "Deleted all", Toast.LENGTH_SHORT).show();
+                    break;
+                // нейтральная кнопка
+                case Dialog.BUTTON_NEUTRAL:
+                    break;
+            }
+        }
+    };
+
+    public Cursor GetCursor(String s){
+        return db.getData(s);
     }
 }

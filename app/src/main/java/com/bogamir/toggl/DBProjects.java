@@ -1,17 +1,17 @@
 package com.bogamir.toggl;
 
-        import android.content.ContentValues;
-        import android.content.Context;
-        import android.database.Cursor;
-        import android.database.sqlite.SQLiteDatabase;
-        import android.database.sqlite.SQLiteDatabase.CursorFactory;
-        import android.database.sqlite.SQLiteOpenHelper;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
 
-public class DB {
+public class DBProjects {
 
-    protected static String DB_NAME = "myDBase";
+    protected static String DB_NAME = "projectDBase";
     private static final int DB_VERSION = 1;
-    protected static String DB_TABLE = "mytab";
+    protected static String DB_TABLE = "myBase";
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TV1= "tv1";
@@ -33,7 +33,7 @@ public class DB {
     private DBHelper mDBHelper;
     private SQLiteDatabase mDB;
 
-    public DB(Context ctx) {
+    public DBProjects(Context ctx) {
         mCtx = ctx;
     }
 
@@ -61,14 +61,7 @@ public class DB {
         mDB.insert(DB_TABLE, null, cv);
     }
 
-    public Cursor getData(String s) {
-        String selection = "tv1 LIKE \"" + s + "%\"";
-        //String[] selectionArgs = new String[] { s };
-        return mDB.query(DB_TABLE, null, selection, null, null, null, COLUMN_TV1); }
-
-    // удалить запись из DB_TABLE
-    public void delRec(long id) { mDB.delete(DB_TABLE, COLUMN_ID + " = " + id, null); }
-
+    // удалить все записи
     public void delAllRec() { mDB.delete(DB_TABLE,null,null); }
 
 
