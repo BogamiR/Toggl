@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public DB db;
     SimpleCursorAdapter scAdapter;
     ListView lvData;
+    Cursor cr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +56,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         db = new DB(this);
         db.open();
 
+        cr = db.getAllData();
+
         String[] from = new String[]{DB.COLUMN_TV1, DB.COLUMN_TV2, DB.COLUMN_TV3, DB.COLUMN_TV4};
         int[] to = new int[]{R.id.tv1, R.id.tv2, R.id.tv3, R.id.tv4};
-        scAdapter = new SimpleCursorAdapter(this, R.layout.custom_layout, null, from, to, 0);
+        scAdapter = new SimpleCursorAdapter(this, R.layout.custom_layout, cr, from, to, 0);
         lvData = (ListView) findViewById(R.id.lvData);
         lvData.setAdapter(scAdapter);
         registerForContextMenu(lvData);

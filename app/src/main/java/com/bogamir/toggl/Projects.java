@@ -16,17 +16,23 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 
 public class Projects extends AppCompatActivity implements TextWatcher, LoaderCallbacks<Cursor> {
 
     AutoCompleteTextView autoCTV;
-    DBProjects dbProjects;
     ArrayAdapter<String> autoAd;
     DB db;
     TextView time;
     ListView lvProjects;
     SimpleCursorAdapter scAdapter;
     Cursor cr;
+    List<String> item = new ArrayList<String>();
+    HashSet<String> mass = new HashSet<String>();
+    int timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,31 +41,37 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        dbProjects = new DBProjects(this);
-        dbProjects.open();
         db = new DB(this);
         db.open();
 
         String[] from = new String[]{DB.COLUMN_TV1, DB.COLUMN_TV2, DB.COLUMN_TV3, DB.COLUMN_TV4};
         int[] to = new int[]{R.id.tv1, R.id.tv2, R.id.tv3, R.id.tv4};
-        scAdapter = new SimpleCursorAdapter(this, R.layout.custom_layout, cr, from, to);
+        scAdapter = new SimpleCursorAdapter(this, R.layout.custom_layout, cr, from, to, 0);
         lvProjects = (ListView) findViewById(R.id.lvProjects);
         lvProjects.setAdapter(scAdapter);
+        getSupportLoaderManager().initLoader(0, null, this);
 
         Cursor cursor = db.getAllData();
+        db.delAllRec_P();
+        getSupportLoaderManager().getLoader(0).forceLoad();
 
-        String[] item = new String[cursor.getCount()];
+
         cursor.moveToFirst();
-        for(int j=0; j<cursor.getCount(); j++){
-            item[j] = cursor.getString(1);
-            dbProjects.addRec(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+        for (int j = 0; j < cursor.getCount(); j++) {
+            mass.add(cursor.getString(1));
+            db.addRec_P(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+            getSupportLoaderManager().getLoader(0).forceLoad();
+            timer += calcTime(cursor.getString(3));
             cursor.moveToNext();
         }
-        //dbProjects.addRec("Vasia","","","");
         cursor.requery();
+        cursor.close();
 
-        cr = dbProjects.getAllData();
-        startManagingCursor(cr);
+        for (String str : mass)
+            item.add(str);
+
+        cr = db.getAllData_P();
+        getSupportLoaderManager().getLoader(0).forceLoad();
 
         autoAd = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, item);
 
@@ -68,13 +80,12 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
         autoCTV.setAdapter(autoAd);
 
         time = (TextView) findViewById(R.id.tvProjects);
+        time.setText(timer + " sec");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        cr.close();
-        dbProjects.close();
     }
 
     @Override
@@ -88,27 +99,35 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
     @Override
     public void afterTextChanged(Editable s) {
 
-        cr.moveToFirst();
-            dbProjects.delAllRec();
-        cr.requery();
+        db.delAllRec_P();
+        getSupportLoaderManager().getLoader(0).forceLoad();
+        timer = 0;
 
         Cursor cursor;
-        if (autoCTV.getText().toString() == ""){
+        if (autoCTV.getText().toString() == "") {
             cursor = db.getAllData();
-        }
-        else {
+        } else {
             cursor = db.getData(autoCTV.getText().toString());
         }
-        cr.moveToFirst();
-        for(int j=0; j<cursor.getCount(); j++){
-            dbProjects.addRec(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+        cursor.moveToFirst();
+        for (int j = 0; j < cursor.getCount(); j++) {
+            db.addRec_P(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+            getSupportLoaderManager().getLoader(0).forceLoad();
+            timer += calcTime(cursor.getString(3));
+            cursor.moveToNext();
         }
-        cr.requery();
+        //db.addRec_P("Vasia","","","");
+        cursor.requery();
+        cursor.close();
+        time.setText(timer + " sec");
+
+        cr = db.getAllData_P();
+        getSupportLoaderManager().getLoader(0).forceLoad();
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(this, dbProjects);
+    public Loader<Cursor> onCreateLoader(int id, Bundle bnd1) {
+        return new MyCursorLoader(this, db);
     }
 
     @Override
@@ -121,17 +140,22 @@ public class Projects extends AppCompatActivity implements TextWatcher, LoaderCa
     }
 
     static class MyCursorLoader extends CursorLoader {
-        DBProjects dbProject;
+        DB db;
 
-        public MyCursorLoader(Context context, DBProjects dbProject) {
+        public MyCursorLoader(Context context, DB db) {
             super(context);
-            this.dbProject = dbProject;
+            this.db = db;
         }
 
         @Override
         public Cursor loadInBackground() {
-            Cursor cursor = dbProject.getAllData();
+            Cursor cursor = db.getAllData_P();
             return cursor;
         }
+    }
+
+    public int calcTime(String s) {
+        String[] words = s.split(" ");
+        return Integer.parseInt(words[0]);
     }
 }
